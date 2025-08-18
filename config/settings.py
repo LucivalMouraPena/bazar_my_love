@@ -43,9 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bazar.apps.BazarConfig',
-    'carrinho.apps.CarrinhoConfig',
-    
-] 
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
