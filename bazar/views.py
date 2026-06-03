@@ -1,4 +1,3 @@
-@'
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Produto
@@ -14,14 +13,13 @@ def adicionar_ao_carrinho(request, produto_id):
     carrinho = request.session.get('carrinho', {})
     chave = str(produto_id)
 
-    quantidade_atual = carrinho.get(chave, 0)
-
-    if quantidade_atual >= produto.estoque:
+    if carrinho.get(chave, 0) >= produto.estoque:
         messages.warning(request, f'Estoque insuficiente para "{produto.nome}".')
         return redirect('home')
 
-    carrinho[chave] = quantidade_atual + 1
+    carrinho[chave] = carrinho.get(chave, 0) + 1
     request.session['carrinho'] = carrinho
+    messages.success(request, f'Produto "{produto.nome}" adicionado ao carrinho.')
     return redirect('home')
 
 
@@ -30,7 +28,7 @@ def ver_carrinho(request):
     produtos_no_carrinho = []
     total = 0
 
-    ids = [int(pid) for pid in carrinho.keys()]
+    ids = [int(pid) for pid in carrinho.keys() if pid.isdigit()]
     produtos = {str(p.id): p for p in Produto.objects.filter(id__in=ids)}
 
     for produto_id, quantidade in carrinho.items():
@@ -45,7 +43,7 @@ def ver_carrinho(request):
             'subtotal': subtotal,
         })
 
-    return render(request, 'carrinho/ver_carrinho.html', {
+    return render(request, 'bazar/carrinho.html', {
         'produtos_no_carrinho': produtos_no_carrinho,
         'total': total,
     })
@@ -62,12 +60,16 @@ def atualizar_carrinho(request):
 
     carrinho = request.session.get('carrinho', {})
 
-    for produto_id, quantidade_str in request.POST.items():
+    for key, value in request.POST.items():
+        if not key.startswith('quantidade_'):
+            continue
+
+        produto_id = key.replace('quantidade_', '')
         if not produto_id.isdigit():
             continue
 
         try:
-            quantidade = int(quantidade_str)
+            quantidade = int(value)
         except (ValueError, TypeError):
             continue
 
@@ -78,7 +80,7 @@ def atualizar_carrinho(request):
 
         if quantidade > produto.estoque:
             quantidade = produto.estoque
-            messages.warning(request, f'Quantidade de "{produto.nome}" ajustada ao estoque disponivel.')
+            messages.warning(request, f'Quantidade de "{produto.nome}" ajustada ao estoque disponível.')
 
         if quantidade > 0:
             carrinho[produto_id] = quantidade
@@ -94,4 +96,3 @@ def remover_do_carrinho(request, produto_id):
     carrinho.pop(str(produto_id), None)
     request.session['carrinho'] = carrinho
     return redirect('carrinho_produtos')
-'@ | Set-Content bazar\views.py -Encoding UTF8

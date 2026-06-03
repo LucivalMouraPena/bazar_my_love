@@ -1,5 +1,4 @@
-﻿@'
-from django.urls import path
+﻿from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -10,4 +9,3 @@ urlpatterns = [
     path('atualizar/', views.atualizar_carrinho, name='atualizar_carrinho'),
     path('remover/<int:produto_id>/', views.remover_do_carrinho, name='remover_do_carrinho'),
 ]
-'@ | Set-Content bazar\urls.py -Encoding UTF8
