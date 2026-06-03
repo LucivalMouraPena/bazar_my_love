@@ -15,7 +15,7 @@ Bazar My Love - {{ produtos|length }} produtos disponíveis
             {% if produto.imagem %}
             <img src="{{ produto.imagem.url }}" class="card-img-top" alt="Imagem de {{ produto.nome }}" loading="lazy">
             {% else %}
-            <img src="{% static 'bazar/sem-imagem.png' %}" class="card-img-top" alt="Imagem não disponível" loading="lazy">
+            <img src="{% static 'bazar/placeholder.svg' %}" class="card-img-top" alt="Imagem não disponível" loading="lazy">
             {% endif %}
 
             <div class="card-body d-flex flex-column">
